@@ -1,0 +1,2 @@
+# SpotifyRandomizer
+A spotify randomizer

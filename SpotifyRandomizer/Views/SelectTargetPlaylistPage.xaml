@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:local="clr-namespace:SpotifyRandomizer;assembly=SpotifyRandomizer"
+             xmlns:ViewModels="clr-namespace:SpotifyRandomizer.ViewModels"
+             xmlns:Models="clr-namespace:SpotifyRandomizer.Models"
+             x:DataType="ViewModels:SelectTargetPlaylistViewModel"
+             x:Class="SpotifyRandomizer.Views.SelectTargetPlaylistPage"
+             Title="SelectTargetPlaylistPage">
+    <Grid WidthRequest="500" Margin="50">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="100"/>
+            <RowDefinition Height="50"/>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="*" />
+            <RowDefinition Height="Auto" />
+        </Grid.RowDefinitions>
+
+        <Label Grid.Row="0" Text="Select a target playlist" VerticalOptions="Center"  HorizontalOptions="Center" />
+
+        <StackLayout Grid.Row="1" VerticalOptions="Center" Orientation="Horizontal" HorizontalOptions="Center">
+            <RadioButton Content="New Playlist" VerticalOptions="Center" IsChecked="{Binding IsSelectedNew}" />
+            <RadioButton Content="Existing Playlist"  IsChecked="{Binding IsSelectedExisting}"/>
+        </StackLayout>
+
+
+        <StackLayout Grid.Row="2" IsVisible="{Binding IsSelectedNew}" VerticalOptions="Center" >
+            <Label Text="Enter new playlist name:" />
+            <Entry Text="{Binding NewPlaylistName}"/>
+        </StackLayout>
+        
+        <StackLayout Grid.Row="3" IsVisible="{Binding IsSelectedExisting}">
+            <ListView  x:Name="ExistingPlaylistListView" ItemsSource="{Binding Playlists}" MinimumHeightRequest="100" VerticalOptions="FillAndExpand" SelectionMode="Single" >
+                <ListView.ItemTemplate>
+                    <DataTemplate x:DataType="ViewModels:PlaylistViewModel">
+                        <ViewCell>
+                            <Grid Padding="10">
+                                <Grid.RowDefinitions>
+                                    <RowDefinition Height="Auto" />
+                                    <RowDefinition Height="Auto" />
+                                </Grid.RowDefinitions>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="Auto" />
+                                    <ColumnDefinition Width="Auto" />
+                                </Grid.ColumnDefinitions>
+                                <Image Grid.RowSpan="2" Source="{Binding ImageLink}" Aspect="AspectFill" HeightRequest="60" WidthRequest="60" />
+                                <Label Grid.Column="1" Text="{Binding Name}" FontAttributes="Bold" />
+                                <Label Grid.Row="1" Grid.Column="1" Text="{Binding Description}" FontAttributes="Italic" VerticalOptions="End" />
+                                <BoxView Grid.ColumnSpan="2" Color="Fuchsia" IsVisible="{Binding IsSelected}" />
+                            </Grid>
+                        </ViewCell>
+                    </DataTemplate>
+                </ListView.ItemTemplate>
+            </ListView>
+        </StackLayout>
+
+        <Button Grid.Row="4" IsEnabled="{Binding IsContinueEnabled}" Text="Continue" Margin="0" Clicked="OnContinueButtonClicked" />
+    </Grid>
+</ContentPage>

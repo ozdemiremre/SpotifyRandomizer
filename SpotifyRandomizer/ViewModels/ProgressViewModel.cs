@@ -38,6 +38,9 @@ namespace SpotifyRandomizer.ViewModels
 
         private async void StartMainRandomizerTask()
         {
+            IsOngoing = true;
+            IsFinished = false;
+
             MainActionProgress = 0f;
             CurrentActionProgress = 0f;
 
@@ -130,6 +133,7 @@ namespace SpotifyRandomizer.ViewModels
             CurrentAction = "";
             MainAction = "Finished!";
             IsFinished = true;
+            IsOngoing = false;
         }
 
         #region Properties
@@ -138,6 +142,7 @@ namespace SpotifyRandomizer.ViewModels
         private float _mainActionProgress;
         private string _mainAction;
         private bool _isFinished;
+        private bool _isOngoing;
 
         public float MainActionProgress
         {
@@ -199,6 +204,19 @@ namespace SpotifyRandomizer.ViewModels
                 if (_isFinished != value)
                 {
                     _isFinished = value;
+                    OnPropertyChanged();
+                }
+            }
+        }
+
+        public bool IsOngoing
+        {
+            get { return _isOngoing; }
+            set
+            {
+                if (_isOngoing != value)
+                {
+                    _isOngoing = value;
                     OnPropertyChanged();
                 }
             }

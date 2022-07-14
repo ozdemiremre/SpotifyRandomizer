@@ -5,12 +5,21 @@
              xmlns:ViewModels="clr-namespace:SpotifyRandomizer.ViewModels"
              xmlns:Models="clr-namespace:SpotifyRandomizer.Models"
              x:DataType="ViewModels:LoginViewModel"
-             Title="LoginPage">
-    <VerticalStackLayout>
-        <Button 
-            Text="Login!"
+             Title="LoginPage"
+             NavigationPage.HasNavigationBar="False">
+    <StackLayout VerticalOptions="Center" Orientation="Vertical" MaximumWidthRequest="500">
+        <Label HorizontalOptions="Center" Text="Spotify Randomizer" Margin="25" Style="{StaticResource TitleLabelStyle}">
+            <Label.Shadow>
+                <Shadow Brush="Black"
+                Offset="1,1"
+                Radius="1"
+                Opacity="0.8" />
+            </Label.Shadow>
+        </Label>
+        <Button BorderWidth="10"
+            Text="Login"
             VerticalOptions="Center" 
-            HorizontalOptions="Center"
+            HorizontalOptions="FillAndExpand"
             Clicked="OnLoginButtonClicked"/>
-    </VerticalStackLayout>
+    </StackLayout>
 </ContentPage>

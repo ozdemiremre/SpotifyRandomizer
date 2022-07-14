@@ -6,27 +6,39 @@
              xmlns:ViewModels="clr-namespace:SpotifyRandomizer.ViewModels"
              xmlns:Models="clr-namespace:SpotifyRandomizer.Models"
              x:DataType="ViewModels:SelectSourcePlaylistViewModel"
-             Title="SelectSourcePlaylistPage">
-    <StackLayout Margin="20" WidthRequest="500" >
-        <Label Text="Select source playlists" VerticalOptions="Center"  HorizontalOptions="Center" Margin="50" />
+             Title="SelectSourcePlaylistPage"
+             NavigationPage.HasNavigationBar="False">
+    <StackLayout Margin="20" MaximumWidthRequest="500" >
+        <Label Text="Select source playlists" VerticalOptions="Center"  HorizontalOptions="Center" Margin="50" FontSize="30" />
         <ListView x:Name="PlaylistListView" ItemsSource="{Binding Playlists}" MinimumHeightRequest="100" VerticalOptions="FillAndExpand" SelectionMode="None">
             <ListView.ItemTemplate>
                 <DataTemplate x:DataType="ViewModels:PlaylistViewModel">
                     <ViewCell>
-                        <Grid Padding="10">
-                            <Grid.RowDefinitions>
-                                <RowDefinition Height="Auto" />
-                                <RowDefinition Height="Auto" />
-                            </Grid.RowDefinitions>
-                            <Grid.ColumnDefinitions>
-                                <ColumnDefinition Width="Auto" />
-                                <ColumnDefinition Width="Auto" />
-                            </Grid.ColumnDefinitions>
-                            <Image Grid.RowSpan="2" Source="{Binding ImageLink}" Aspect="AspectFill" HeightRequest="60" WidthRequest="60" />
-                            <Label Grid.Column="1" Text="{Binding Name}" FontAttributes="Bold" />
-                            <Label Grid.Row="1" Grid.Column="1" Text="{Binding Description}" FontAttributes="Italic" VerticalOptions="End" />
-                            <BoxView Grid.ColumnSpan="2" Color="Fuchsia" IsVisible="{Binding IsSelected}" />
-                        </Grid>
+                        <Frame x:Name="ItemFrame" CornerRadius="15" Margin="2" Padding="1" IsClippedToBounds="False">
+                            <Frame.Triggers>
+                                <DataTrigger TargetType="Frame" Binding="{Binding IsSelected}" Value="false">
+                                    <Setter Property="BackgroundColor" Value="Transparent" />
+                                    <Setter Property="BorderColor" Value="Transparent" />
+                                </DataTrigger>
+                                <DataTrigger TargetType="Frame" Binding="{Binding IsSelected}" Value="true">
+                                    <Setter Property="BackgroundColor" Value="CadetBlue" />
+                                    <Setter Property="BorderColor" Value="DarkBlue" />
+                                </DataTrigger>
+                            </Frame.Triggers>
+                            <Grid Margin="5" Padding="5">
+                                <Grid.RowDefinitions>
+                                    <RowDefinition Height="Auto" />
+                                    <RowDefinition Height="Auto" />
+                                </Grid.RowDefinitions>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="Auto" />
+                                    <ColumnDefinition Width="Auto" />
+                                </Grid.ColumnDefinitions>
+                                <Image Grid.RowSpan="2" Source="{Binding ImageLink}" Aspect="AspectFill" HeightRequest="60" WidthRequest="60" />
+                                <Label Grid.Column="1" Text="{Binding Name}" FontAttributes="Bold" />
+                                <Label Grid.Row="1" Grid.Column="1" Text="{Binding Description}" FontAttributes="Italic" VerticalOptions="End" />
+                            </Grid>
+                        </Frame>
                     </ViewCell>
                 </DataTemplate>
             </ListView.ItemTemplate>

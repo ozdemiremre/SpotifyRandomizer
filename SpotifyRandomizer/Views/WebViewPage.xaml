@@ -6,7 +6,8 @@
              xmlns:ViewModels="clr-namespace:SpotifyRandomizer.ViewModels"
              xmlns:Models="clr-namespace:SpotifyRandomizer.Models"
              x:DataType="ViewModels:WebViewModel"
-             Title="WebViewPage">
+             Title="WebViewPage"
+             NavigationPage.HasNavigationBar="False">
     <WebView x:Name="webView">
         
     </WebView>

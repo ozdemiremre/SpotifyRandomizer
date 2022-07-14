@@ -6,8 +6,8 @@
              xmlns:Models="clr-namespace:SpotifyRandomizer.Models"
              x:DataType="ViewModels:SelectTargetPlaylistViewModel"
              x:Class="SpotifyRandomizer.Views.SelectTargetPlaylistPage"
-             Title="SelectTargetPlaylistPage">
-    <Grid WidthRequest="500" Margin="50">
+             NavigationPage.HasNavigationBar="False">
+    <Grid Margin="50">
         <Grid.RowDefinitions>
             <RowDefinition Height="100"/>
             <RowDefinition Height="50"/>

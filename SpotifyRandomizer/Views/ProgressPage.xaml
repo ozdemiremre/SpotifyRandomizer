@@ -5,13 +5,14 @@
              xmlns:ViewModels="clr-namespace:SpotifyRandomizer.ViewModels"
              xmlns:Models="clr-namespace:SpotifyRandomizer.Models"
              x:DataType="ViewModels:ProgressViewModel"
-             Title="ProgressPage">
-    <StackLayout Margin="20" WidthRequest="500" VerticalOptions="Center">
+             Title="ProgressPage"
+             NavigationPage.HasNavigationBar="False">
+    <StackLayout Margin="20" MaximumWidthRequest="500" VerticalOptions="Center">
         <Label Text="{Binding MainAction}" HorizontalOptions="Center" Margin="0,20,0,5"/>
-        <ProgressBar x:Name="MainProgressBar" Progress="{Binding MainActionProgress}"/>
+        <ProgressBar IsVisible="{Binding IsOngoing}" x:Name="MainProgressBar" Progress="{Binding MainActionProgress}"/>
 
         <Label Text="{Binding CurrentAction}" HorizontalOptions="Center" Margin="0,20,0,5"/>
-        <ProgressBar x:Name="CurrentProgressBar" Progress="{Binding CurrentActionProgress}"/>
+        <ProgressBar IsVisible="{Binding IsOngoing}" x:Name="CurrentProgressBar" Progress="{Binding CurrentActionProgress}"/>
 
         <StackLayout IsVisible="{Binding IsFinished}" Orientation="Horizontal" Spacing="10" HorizontalOptions="Center">
             <Button Clicked="OnExitClicked" Text="Exit"/>

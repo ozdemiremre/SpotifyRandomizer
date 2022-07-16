@@ -16,7 +16,7 @@
             <RowDefinition Height="Auto" />
         </Grid.RowDefinitions>
 
-        <Label Grid.Row="0" Text="Select a target playlist" VerticalOptions="Center"  HorizontalOptions="Center" />
+        <Label Grid.Row="0" Text="Select a target playlist" VerticalOptions="Center" HorizontalOptions="Center" />
 
         <StackLayout Grid.Row="1" VerticalOptions="Center" Orientation="Horizontal" HorizontalOptions="Center">
             <RadioButton Content="New Playlist" VerticalOptions="Center" IsChecked="{Binding IsSelectedNew}" />
@@ -54,6 +54,6 @@
             </ListView>
         </StackLayout>
 
-        <Button Grid.Row="4" IsEnabled="{Binding IsContinueEnabled}" Text="Continue" Margin="0" Clicked="OnContinueButtonClicked" />
+        <Button Grid.Row="4" IsEnabled="{Binding IsContinueEnabled}" Text="Continue" Margin="20" Clicked="OnContinueButtonClicked" />
     </Grid>
 </ContentPage>

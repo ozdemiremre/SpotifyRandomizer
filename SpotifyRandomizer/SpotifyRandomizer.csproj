@@ -12,10 +12,10 @@
 		<ImplicitUsings>enable</ImplicitUsings>
 
 		<!-- Display name -->
-		<ApplicationTitle>SpotifyRandomizer</ApplicationTitle>
+		<ApplicationTitle>Spotify Randomizer</ApplicationTitle>
 
 		<!-- App Identifier -->
-		<ApplicationId>com.companyname.spotifyrandomizer</ApplicationId>
+		<ApplicationId>com.emreozdemir.spotifyrandomizer</ApplicationId>
 		<ApplicationIdGuid>6B56B103-555D-4178-8A7B-3D65DD40E882</ApplicationIdGuid>
 
 		<!-- Versions -->
@@ -30,9 +30,15 @@
 		<SupportedOSPlatformVersion Condition="$([MSBuild]::GetTargetPlatformIdentifier('$(TargetFramework)')) == 'tizen'">6.5</SupportedOSPlatformVersion>
 		<UserSecretsId>18ef43dc-d937-4f4a-bbc8-ec6caebe6df1</UserSecretsId>
 		<Configurations>Debug;Release;Debug_wTest</Configurations>
+    <WindowsAppSDKSelfContained>true</WindowsAppSDKSelfContained>
+    <Platforms>AnyCPU;x64</Platforms>
 	</PropertyGroup>
 
 	<PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Debug|net6.0-android|AnyCPU'">
+	  <DefineConstants>$(DefineConstants)TRACE;TEST</DefineConstants>
+	</PropertyGroup>
+
+	<PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Debug|net6.0-android|x64'">
 	  <DefineConstants>$(DefineConstants)TRACE;TEST</DefineConstants>
 	</PropertyGroup>
 
@@ -40,7 +46,15 @@
 	  <DefineConstants>$(DefineConstants)TRACE;TEST</DefineConstants>
 	</PropertyGroup>
 
+	<PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Debug_wTest|net6.0-android|x64'">
+	  <DefineConstants>$(DefineConstants)TRACE;TEST</DefineConstants>
+	</PropertyGroup>
+
 	<PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Release|net6.0-android|AnyCPU'">
+	  <DefineConstants>$(DefineConstants)TRACE;TEST</DefineConstants>
+	</PropertyGroup>
+
+	<PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Release|net6.0-android|x64'">
 	  <DefineConstants>$(DefineConstants)TRACE;TEST</DefineConstants>
 	</PropertyGroup>
 
@@ -48,7 +62,15 @@
 	  <DefineConstants>$(DefineConstants)TRACE;TEST</DefineConstants>
 	</PropertyGroup>
 
+	<PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Debug|net6.0-ios|x64'">
+	  <DefineConstants>$(DefineConstants)TRACE;TEST</DefineConstants>
+	</PropertyGroup>
+
 	<PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Debug_wTest|net6.0-ios|AnyCPU'">
+	  <DefineConstants>$(DefineConstants)TRACE;TEST</DefineConstants>
+	</PropertyGroup>
+
+	<PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Debug_wTest|net6.0-ios|x64'">
 	  <DefineConstants>$(DefineConstants)TRACE;TEST</DefineConstants>
 	</PropertyGroup>
 
@@ -56,7 +78,15 @@
 	  <DefineConstants>$(DefineConstants)TRACE;TEST</DefineConstants>
 	</PropertyGroup>
 
+	<PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Release|net6.0-ios|x64'">
+	  <DefineConstants>$(DefineConstants)TRACE;TEST</DefineConstants>
+	</PropertyGroup>
+
 	<PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Debug|net6.0-maccatalyst|AnyCPU'">
+	  <DefineConstants>$(DefineConstants)TRACE;TEST</DefineConstants>
+	</PropertyGroup>
+
+	<PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Debug|net6.0-maccatalyst|x64'">
 	  <DefineConstants>$(DefineConstants)TRACE;TEST</DefineConstants>
 	</PropertyGroup>
 
@@ -64,7 +94,15 @@
 	  <DefineConstants>$(DefineConstants)TRACE;TEST</DefineConstants>
 	</PropertyGroup>
 
+	<PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Debug_wTest|net6.0-maccatalyst|x64'">
+	  <DefineConstants>$(DefineConstants)TRACE;TEST</DefineConstants>
+	</PropertyGroup>
+
 	<PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Release|net6.0-maccatalyst|AnyCPU'">
+	  <DefineConstants>$(DefineConstants)TRACE;TEST</DefineConstants>
+	</PropertyGroup>
+
+	<PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Release|net6.0-maccatalyst|x64'">
 	  <DefineConstants>$(DefineConstants)TRACE;TEST</DefineConstants>
 	</PropertyGroup>
 
@@ -72,7 +110,15 @@
 	  <DefineConstants>$(DefineConstants)TRACE;TEST</DefineConstants>
 	</PropertyGroup>
 
+	<PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Debug|net6.0-windows10.0.19041.0|x64'">
+	  <DefineConstants>$(DefineConstants)TRACE;TEST</DefineConstants>
+	</PropertyGroup>
+
 	<PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Debug_wTest|net6.0-windows10.0.19041.0|AnyCPU'">
+	  <DefineConstants>$(DefineConstants)TRACE;TEST</DefineConstants>
+	</PropertyGroup>
+
+	<PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Debug_wTest|net6.0-windows10.0.19041.0|x64'">
 	  <DefineConstants>$(DefineConstants)TRACE;TEST</DefineConstants>
 	</PropertyGroup>
 
@@ -80,22 +126,28 @@
 	  <DefineConstants>$(DefineConstants)TRACE;TEST</DefineConstants>
 	</PropertyGroup>
 
+	<PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Release|net6.0-windows10.0.19041.0|x64'">
+	  <DefineConstants>$(DefineConstants)TRACE;TEST</DefineConstants>
+	</PropertyGroup>
+
 	<ItemGroup>
 		<!-- App Icon -->
-		<MauiIcon Include="Resources\AppIcon\appicon.svg" ForegroundFile="Resources\AppIcon\appiconfg.svg" Color="#512BD4" />
+		<MauiIcon Include="Resources\AppIcon\appicon.svg" ForegroundFile="Resources\AppIcon\shuffle_ico.svg" Color="#2B44D4" />
 
 		<!-- Splash Screen -->
-		<MauiSplashScreen Include="Resources\Splash\splash.svg" Color="#512BD4" BaseSize="128,128" />
+		<MauiSplashScreen Include="Resources\Splash\splash.svg" Color="#022F40" BaseSize="128,128" />
 
 		<!-- Images -->
 		<MauiImage Include="Resources\Images\*" />
-		<MauiImage Update="Resources\Images\dotnet_bot.svg" BaseSize="168,208" />
 
 		<!-- Custom Fonts -->
 		<MauiFont Include="Resources\Fonts\*" />
 
 		<!-- Raw Assets (also remove the "Resources\Raw" prefix) -->
 		<MauiAsset Include="Resources\Raw\**" LogicalName="%(RecursiveDir)%(Filename)%(Extension)" />
+
+    <MauiImage Include="Resources\AppIcon\shuffle_ico.svg" BaseSize="256,256" />
+    <MauiImage Include="Resources\Images\shuffle_img.svg" />
 	</ItemGroup>
 
 	<ItemGroup>
@@ -115,5 +167,11 @@
 	    <Generator>MSBuild:Compile</Generator>
 	  </MauiXaml>
 	</ItemGroup>
+
+  <Target Name="_RemoveFrameworkReferences" BeforeTargets="_ConvertItems;_CalculateInputsForGenerateCurrentProjectAppxManifest">
+    <ItemGroup>
+      <FrameworkSdkReference Remove="@(FrameworkSdkReference)" Condition="$([System.String]::Copy('%(FrameworkSdkReference.SDKName)').StartsWith('Microsoft.WindowsAppRuntime.'))" />
+    </ItemGroup>
+  </Target>
 
 </Project>

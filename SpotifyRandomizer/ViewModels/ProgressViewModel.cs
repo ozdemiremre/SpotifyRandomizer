@@ -110,7 +110,7 @@ namespace SpotifyRandomizer.ViewModels
                 MainAction = $"Cleaning the existing playlist {_targetExistingTargetPlaylist.Name}";
 
                 // Clean existing playlist
-                bool clearResult = await SpotifySession.ActiveSession.ClearAllTracksInPlaylist(_targetExistingTargetPlaylist, f => { CurrentActionProgress = f; CurrentAction = $"Clearing tracks in ${_targetExistingTargetPlaylist.Name} %{(int)(f * 100)}"; });
+                bool clearResult = await SpotifySession.ActiveSession.ClearAllTracksInPlaylist(_targetExistingTargetPlaylist, f => { CurrentActionProgress = f; CurrentAction = $"Clearing tracks in {_targetExistingTargetPlaylist.Name} %{(int)(f * 100)}"; });
 
                 playlistToAddTracksTo = _targetExistingTargetPlaylist;
             }

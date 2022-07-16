@@ -8,24 +8,24 @@
              x:DataType="ViewModels:SelectSourcePlaylistViewModel"
              Title="SelectSourcePlaylistPage"
              NavigationPage.HasNavigationBar="False">
-    <StackLayout Margin="20" MaximumWidthRequest="500" >
+    <StackLayout Margin="50" >
         <Label Text="Select source playlists" VerticalOptions="Center"  HorizontalOptions="Center" Margin="50" FontSize="30" />
         <ListView x:Name="PlaylistListView" ItemsSource="{Binding Playlists}" MinimumHeightRequest="100" VerticalOptions="FillAndExpand" SelectionMode="None">
             <ListView.ItemTemplate>
                 <DataTemplate x:DataType="ViewModels:PlaylistViewModel">
                     <ViewCell>
-                        <Frame x:Name="ItemFrame" CornerRadius="15" Margin="2" Padding="1" IsClippedToBounds="False">
+                        <Frame x:Name="ItemFrame" CornerRadius="3" Padding="10" IsClippedToBounds="False">
                             <Frame.Triggers>
                                 <DataTrigger TargetType="Frame" Binding="{Binding IsSelected}" Value="false">
                                     <Setter Property="BackgroundColor" Value="Transparent" />
                                     <Setter Property="BorderColor" Value="Transparent" />
                                 </DataTrigger>
                                 <DataTrigger TargetType="Frame" Binding="{Binding IsSelected}" Value="true">
-                                    <Setter Property="BackgroundColor" Value="CadetBlue" />
-                                    <Setter Property="BorderColor" Value="DarkBlue" />
+                                    <Setter Property="BackgroundColor" Value="{StaticResource BlueSapphire}" />
+                                    <Setter Property="BorderColor" Value="Wheat" />
                                 </DataTrigger>
                             </Frame.Triggers>
-                            <Grid Margin="5" Padding="5">
+                            <Grid>
                                 <Grid.RowDefinitions>
                                     <RowDefinition Height="Auto" />
                                     <RowDefinition Height="Auto" />

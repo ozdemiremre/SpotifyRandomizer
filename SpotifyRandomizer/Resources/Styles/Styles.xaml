@@ -24,13 +24,13 @@
     </Style>
 
     <Style x:Key="TitleLabelStyle" TargetType="Label" >
-        <Setter Property="TextColor" Value="SteelBlue"/>
+        <Setter Property="TextColor" Value="{StaticResource White}"/>
         <Setter Property="FontSize" Value="45"/>
     </Style>
 
     <Style TargetType="Button">
-        <Setter Property="TextColor" Value="{AppThemeBinding Light={StaticResource White}, Dark={StaticResource Primary}}" />
-        <Setter Property="BackgroundColor" Value="{AppThemeBinding Light={StaticResource Primary}, Dark={StaticResource White}}" />
+        <Setter Property="TextColor" Value="{AppThemeBinding Light={StaticResource White}, Dark={StaticResource White}}" />
+        <Setter Property="BackgroundColor" Value="{AppThemeBinding Light={StaticResource Primary}, Dark={StaticResource PacificBlue}}" />
         <Setter Property="FontFamily" Value="OpenSansRegular"/>
         <Setter Property="FontSize" Value="20"/>
         <Setter Property="CornerRadius" Value="8"/>
@@ -151,7 +151,7 @@
     </Style>
 
     <Style TargetType="Label">
-        <Setter Property="TextColor" Value="{AppThemeBinding Light={StaticResource Gray900}, Dark={StaticResource Black}}" />
+        <Setter Property="TextColor" Value="{AppThemeBinding Light={StaticResource Gray900}, Dark={StaticResource Gray100}}" />
         <Setter Property="FontFamily" Value="OpenSansRegular" />
         <Setter Property="FontSize" Value="14" />
         <Setter Property="VisualStateManager.VisualStateGroups">
@@ -357,7 +357,7 @@
 
     <Style TargetType="Page" ApplyToDerivedTypes="True">
         <Setter Property="Padding" Value="0"/>
-        <Setter Property="BackgroundColor" Value="{AppThemeBinding Light={StaticResource Gray200}, Dark={StaticResource Gray200}}" />
+        <Setter Property="BackgroundColor" Value="{AppThemeBinding Light={StaticResource PrussianBlue}, Dark={StaticResource PrussianBlue}}" />
     </Style>
 
     <Style TargetType="Shell" ApplyToDerivedTypes="True">

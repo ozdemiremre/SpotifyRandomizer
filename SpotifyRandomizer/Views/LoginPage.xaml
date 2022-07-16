@@ -7,7 +7,15 @@
              x:DataType="ViewModels:LoginViewModel"
              Title="LoginPage"
              NavigationPage.HasNavigationBar="False">
-    <StackLayout VerticalOptions="Center" Orientation="Vertical" MaximumWidthRequest="500">
+    <StackLayout VerticalOptions="Center" Orientation="Vertical" MaximumWidthRequest="500" Margin="20">
+        <Image WidthRequest="100" HeightRequest="100" Aspect="AspectFill" Source="shuffle_img.png">
+            <Image.Shadow >
+                <Shadow Brush="White"
+                Offset="1,1"
+                Radius="20"
+                Opacity="1" />
+            </Image.Shadow>
+        </Image>
         <Label HorizontalOptions="Center" Text="Spotify Randomizer" Margin="25" Style="{StaticResource TitleLabelStyle}">
             <Label.Shadow>
                 <Shadow Brush="Black"
@@ -16,8 +24,8 @@
                 Opacity="0.8" />
             </Label.Shadow>
         </Label>
-        <Button BorderWidth="10"
-            Text="Login"
+        <Button
+            Text="Login to Spotify"
             VerticalOptions="Center" 
             HorizontalOptions="FillAndExpand"
             Clicked="OnLoginButtonClicked"/>

@@ -9,6 +9,5 @@
              Title="WebViewPage"
              NavigationPage.HasNavigationBar="False">
     <WebView x:Name="webView">
-        
     </WebView>
 </ContentPage>

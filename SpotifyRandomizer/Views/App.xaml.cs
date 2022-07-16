@@ -9,11 +9,5 @@ public partial class App : Application
 	{
 		InitializeComponent();
 		MainPage = new NavigationPage(new LoginPage());
-        Shell.SetNavBarIsVisible(new NavBarChangeClass(), false);
     }
-}
-
-public class NavBarChangeClass: BindableObject
-{
-
 }

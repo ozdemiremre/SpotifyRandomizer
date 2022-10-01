@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using System.Net;
+using System.Net.Http;
 using System.Net.Http.Headers;
 using System.Text;
 using System.Threading.Tasks;
@@ -29,6 +30,7 @@ namespace SpotifyRandomizer.Models
         private AccessTokenResult _tokenResult;
         private UserProfileResult _activeUser;
         private readonly string _clientSecret;
+        private HttpClient _client;
 
         public event ISpotifyHandler.OnRequestResultDelegate OnLoginConcluded;
 
@@ -127,10 +129,9 @@ namespace SpotifyRandomizer.Models
         private async Task<AccessTokenResult> GetAccessTokenAsync()
         {
             AccessTokenResult tokenResult = null;
+            _client = new HttpClient();
 
-            using (var httpClient = new HttpClient())
-            {
-                List<KeyValuePair<string, string>> postData = new List<KeyValuePair<string, string>>
+            List<KeyValuePair<string, string>> postData = new List<KeyValuePair<string, string>>
                 {
                     new KeyValuePair<string, string>("grant_type", "authorization_code"),
                     new KeyValuePair<string, string>("code", _authorizationCode),
@@ -139,23 +140,23 @@ namespace SpotifyRandomizer.Models
                     new KeyValuePair<string, string>("code_verifier", _verifier)
                 };
 
-                using (var content = new FormUrlEncodedContent(postData))
+            using (var content = new FormUrlEncodedContent(postData))
+            {
+                content.Headers.Clear();
+                content.Headers.Add("Content-Type", "application/x-www-form-urlencoded");
+                var authStr = "Basic " + Helpers.Base64Encode(_clientID) + ":" + Helpers.Base64Encode(_clientSecret);
+                content.Headers.TryAddWithoutValidation("Authorization", authStr);
+
+                var request = new HttpRequestMessage(HttpMethod.Post, "https://accounts.spotify.com/api/token");
+                request.Content = content;
+
+                HttpResponseMessage postResponse = await _client.SendAsync(request);
+
+                if (postResponse.IsSuccessStatusCode)
                 {
-                    content.Headers.Clear();
-                    content.Headers.Add("Content-Type", "application/x-www-form-urlencoded");
-
-                    //httpClient.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
-                    var authStr = "Basic " + Helpers.Base64Encode(_clientID) + ":" + Helpers.Base64Encode(_clientSecret);
-
-                    content.Headers.TryAddWithoutValidation("Authorization", authStr);
-                    HttpResponseMessage postResponse = await httpClient.PostAsync("https://accounts.spotify.com/api/token", content);
-
-                    if (postResponse.IsSuccessStatusCode)
-                    {
-                        _accessToken = postResponse.Content.ToString();
-                        var resultAsString = await postResponse.Content.ReadAsStringAsync();
-                        tokenResult = (AccessTokenResult)System.Text.Json.JsonSerializer.Deserialize(resultAsString, typeof(AccessTokenResult));
-                    }
+                    _accessToken = postResponse.Content.ToString();
+                    var resultAsString = await postResponse.Content.ReadAsStringAsync();
+                    tokenResult = (AccessTokenResult)System.Text.Json.JsonSerializer.Deserialize(resultAsString, typeof(AccessTokenResult));
                 }
             }
 
@@ -172,19 +173,17 @@ namespace SpotifyRandomizer.Models
             T responseType = null;
             string url = typeof(T).GetProperty("URL", System.Reflection.BindingFlags.Public | System.Reflection.BindingFlags.Static).GetValue(null).ToString();
 
-            using (var client = new HttpClient())
-            {
-                client.BaseAddress = new Uri(_apiBase);
-                client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
-                client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", _tokenResult.Token);
+            var request = new HttpRequestMessage(HttpMethod.Get, url);
+            request.Headers.Clear();
+            request.Headers.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
+            request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", _tokenResult.Token);
 
-                using (HttpResponseMessage response = await client.GetAsync(url))
+            using (HttpResponseMessage response = await _client.SendAsync(request))
+            {
+                if (response.IsSuccessStatusCode)
                 {
-                    if (response.IsSuccessStatusCode)
-                    {
-                        var resultAsString = await response.Content.ReadAsStringAsync();
-                        responseType = (T)System.Text.Json.JsonSerializer.Deserialize(resultAsString, typeof(T));
-                    }
+                    var resultAsString = await response.Content.ReadAsStringAsync();
+                    responseType = (T)System.Text.Json.JsonSerializer.Deserialize(resultAsString, typeof(T));
                 }
             }
 
@@ -195,19 +194,17 @@ namespace SpotifyRandomizer.Models
         {
             T responseType = default;
 
-            using (var client = new HttpClient())
-            {
-                client.BaseAddress = new Uri(_apiBase);
-                client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
-                client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", _tokenResult.Token);
+            var request = new HttpRequestMessage(HttpMethod.Get, URL);
+            request.Headers.Clear();
+            request.Headers.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
+            request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", _tokenResult.Token);
 
-                using (HttpResponseMessage response = await client.GetAsync(URL))
+            using (HttpResponseMessage response = await _client.SendAsync(request))
+            {
+                if (response.IsSuccessStatusCode)
                 {
-                    if (response.IsSuccessStatusCode)
-                    {
-                        var resultAsString = await response.Content.ReadAsStringAsync();
-                        responseType = (T)System.Text.Json.JsonSerializer.Deserialize(resultAsString, typeof(T));
-                    }
+                    var resultAsString = await response.Content.ReadAsStringAsync();
+                    responseType = (T)System.Text.Json.JsonSerializer.Deserialize(resultAsString, typeof(T));
                 }
             }
 
@@ -258,34 +255,33 @@ namespace SpotifyRandomizer.Models
         {
             Playlist tokenResult = null;
 
-            using (var httpClient = new HttpClient())
+            var creationMessage = new CreatePlaylistBody
             {
-                var creationMessage = new CreatePlaylistBody
+                IsPublic = isPublic,
+                IsCollaborative = isCollaborative,
+                Description = newPlaylistDescription,
+                Name = newPlaylistName
+            };
+
+            var creationJsonString = System.Text.Json.JsonSerializer.Serialize(creationMessage, typeof(CreatePlaylistBody));
+
+            using (var content = new StringContent(creationJsonString, Encoding.UTF8, "application/json"))
+            {
+                content.Headers.Add("Content-Type", "application/json");
+
+                var url = CreatePlaylistBody.GetURL(_activeUser.ID);
+                var request = new HttpRequestMessage(HttpMethod.Post, _apiBase);
+                request.Headers.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
+                request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", _tokenResult.Token);
+                request.Content = content;
+
+                HttpResponseMessage postResponse = await _client.SendAsync(request);
+
+                if (postResponse.IsSuccessStatusCode)
                 {
-                    IsPublic = isPublic,
-                    IsCollaborative = isCollaborative,
-                    Description = newPlaylistDescription,
-                    Name = newPlaylistName
-                };
-
-                var creationJsonString = System.Text.Json.JsonSerializer.Serialize(creationMessage, typeof(CreatePlaylistBody));
-
-                using (var content = new StringContent(creationJsonString, Encoding.UTF8, "application/json"))
-                {
-                    content.Headers.Clear();
-                    content.Headers.Add("Content-Type", "application/json");
-                    httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", _tokenResult.Token);
-                    httpClient.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
-
-                    var url = CreatePlaylistBody.GetURL(_activeUser.ID);
-                    HttpResponseMessage postResponse = await httpClient.PostAsync(url, content);
-
-                    if (postResponse.IsSuccessStatusCode)
-                    {
-                        _accessToken = postResponse.Content.ToString();
-                        var resultAsString = await postResponse.Content.ReadAsStringAsync();
-                        tokenResult = (Playlist)System.Text.Json.JsonSerializer.Deserialize(resultAsString, typeof(Playlist));
-                    }
+                    _accessToken = postResponse.Content.ToString();
+                    var resultAsString = await postResponse.Content.ReadAsStringAsync();
+                    tokenResult = (Playlist)System.Text.Json.JsonSerializer.Deserialize(resultAsString, typeof(Playlist));
                 }
             }
 
@@ -298,46 +294,40 @@ namespace SpotifyRandomizer.Models
 
             var allTracks = await GetAllTracksOfPlaylist(targetExistingTargetPlaylist, f => reportProgress?.Invoke(f * 0.5f));
 
-            using (var httpClient = new HttpClient())
+            var urisOfTracks = allTracks.ConvertAll(t => t.Uri);
+            int removedTrackCount = 0;
+            reportProgress?.Invoke(0.5f);
+
+            do
             {
-                var urisOfTracks = allTracks.ConvertAll(t => t.Uri);
-                int removedTrackCount = 0;
-                reportProgress?.Invoke(0.5f);
-
-                do
+                int countThatWillBeRemoved = Math.Min(_maxTrackAddRemoveCount, urisOfTracks.Count - removedTrackCount);
+                var selectUris = urisOfTracks.GetRange(removedTrackCount, countThatWillBeRemoved);
+                var removalMessage = new RemoveTracksFromPlaylistBody
                 {
-                    int countThatWillBeRemoved = Math.Min(_maxTrackAddRemoveCount, urisOfTracks.Count - removedTrackCount);
-                    var selectUris = urisOfTracks.GetRange(removedTrackCount, countThatWillBeRemoved);
-                    var removalMessage = new RemoveTracksFromPlaylistBody
+                    TrackUris = selectUris
+                };
+
+                var deletionJsonString = System.Text.Json.JsonSerializer.Serialize(removalMessage, typeof(RemoveTracksFromPlaylistBody));
+
+                using (var content = new StringContent(deletionJsonString, Encoding.UTF8, "application/json"))
+                {
+                    var url = RemoveTracksFromPlaylistBody.GetURL(targetExistingTargetPlaylist.ID);
+                    var request = new HttpRequestMessage(HttpMethod.Delete, url);
+                    request.Headers.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
+                    request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", _tokenResult.Token);
+                    request.Content = new StringContent(deletionJsonString, Encoding.UTF8, "application/json");
+                    HttpResponseMessage postResponse = await _client.SendAsync(request);
+
+                    if (postResponse.IsSuccessStatusCode)
                     {
-                        TrackUris = selectUris
-                    };
-
-                    var deletionJsonString = System.Text.Json.JsonSerializer.Serialize(removalMessage, typeof(RemoveTracksFromPlaylistBody));
-
-                    using (var content = new StringContent(deletionJsonString, Encoding.UTF8, "application/json"))
-                    {
-                        httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", _tokenResult.Token);
-                        httpClient.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
-
-                        var url = RemoveTracksFromPlaylistBody.GetURL(targetExistingTargetPlaylist.ID);
-                        var request = new HttpRequestMessage(HttpMethod.Delete, url);
-                        request.Content = new StringContent(deletionJsonString, Encoding.UTF8, "application/json");
-
-                        HttpResponseMessage postResponse = await httpClient.SendAsync(request);
-
-                        if (postResponse.IsSuccessStatusCode)
-                        {
-                            success = true;
-                        }
+                        success = true;
                     }
-
-                    removedTrackCount += countThatWillBeRemoved;
-                    reportProgress?.Invoke(0.5f + ((removedTrackCount / (float)urisOfTracks.Count) * 0.5f));
                 }
-                while (urisOfTracks.Count > removedTrackCount);
 
+                removedTrackCount += countThatWillBeRemoved;
+                reportProgress?.Invoke(0.5f + ((removedTrackCount / (float)urisOfTracks.Count) * 0.5f));
             }
+            while (urisOfTracks.Count > removedTrackCount);
 
             return success;
         }
@@ -346,45 +336,40 @@ namespace SpotifyRandomizer.Models
         {
             bool success = false;
 
-            using (var httpClient = new HttpClient())
+            var urisOfTracks = uniqueTracks.ConvertAll(t => t.Uri);
+            int addedTrackCount = 0;
+            reportProgress?.Invoke(0f);
+
+            do
             {
-                var urisOfTracks = uniqueTracks.ConvertAll(t => t.Uri);
-                int addedTrackCount = 0;
-                reportProgress?.Invoke(0f);
-
-                do
+                int countThatWillBeAdded = Math.Min(_maxTrackAddRemoveCount, urisOfTracks.Count - addedTrackCount);
+                var selectUris = urisOfTracks.GetRange(addedTrackCount, countThatWillBeAdded);
+                var additionMessage = new AddTracksToPlaylistBody
                 {
-                    int countThatWillBeAdded = Math.Min(_maxTrackAddRemoveCount, urisOfTracks.Count - addedTrackCount);
-                    var selectUris = urisOfTracks.GetRange(addedTrackCount, countThatWillBeAdded);
-                    var additionMessage = new AddTracksToPlaylistBody
+                    TrackUris = selectUris
+                };
+
+                var creationJsonString = System.Text.Json.JsonSerializer.Serialize(additionMessage, typeof(AddTracksToPlaylistBody));
+
+                using (var content = new StringContent(creationJsonString, Encoding.UTF8, "application/json"))
+                {
+                    var url = AddTracksToPlaylistBody.GetURL(playlistToAddTracksTo.ID);
+                    var request = new HttpRequestMessage(HttpMethod.Post, url);
+                    request.Headers.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
+                    request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", _tokenResult.Token);
+                    request.Content = content;
+                    HttpResponseMessage postResponse = await _client.SendAsync(request);
+
+                    if (postResponse.IsSuccessStatusCode)
                     {
-                        TrackUris = selectUris
-                    };
-
-                    var creationJsonString = System.Text.Json.JsonSerializer.Serialize(additionMessage, typeof(AddTracksToPlaylistBody));
-
-                    using (var content = new StringContent(creationJsonString, Encoding.UTF8, "application/json"))
-                    {
-                        content.Headers.Clear();
-                        content.Headers.Add("Content-Type", "application/json");
-                        httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", _tokenResult.Token);
-                        httpClient.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
-
-                        var url = AddTracksToPlaylistBody.GetURL(playlistToAddTracksTo.ID);
-                        HttpResponseMessage postResponse = await httpClient.PostAsync(url, content);
-
-                        if (postResponse.IsSuccessStatusCode)
-                        {
-                            success = true;
-                        }
+                        success = true;
                     }
-
-                    addedTrackCount += countThatWillBeAdded;
-                    reportProgress?.Invoke(addedTrackCount / (float)urisOfTracks.Count);
                 }
-                while (urisOfTracks.Count > addedTrackCount);
 
+                addedTrackCount += countThatWillBeAdded;
+                reportProgress?.Invoke(addedTrackCount / (float)urisOfTracks.Count);
             }
+            while (urisOfTracks.Count > addedTrackCount);
 
             return success;
         }
